@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: cargo.eclass
@@ -6,23 +6,28 @@
 # rust@gentoo.org
 # @AUTHOR:
 # Doug Goldstein <cardoe@gentoo.org>
+# @SUPPORTED_EAPIS: 5 6 7
 # @BLURB: common functions and variables for cargo builds
 
 if [[ -z ${_CARGO_ECLASS} ]]; then
 _CARGO_ECLASS=1
 
+CARGO_DEPEND=""
+[[ ${CATEGORY}/${PN} != dev-lang/rust ]] && CARGO_DEPEND="virtual/rust"
+
+: ${CARGO_FETCH_CRATES:=not}
+
 case ${EAPI} in
-	6) : ;;
-	*) die "EAPI=${EAPI:-0} is not supported" ;;
+	5|6) : DEPEND="${DEPEND} ${CARGO_DEPEND}";;
+	7) : BDEPEND="${BDEPEND} ${CARGO_DEPEND}";;
+	*) die "${ECLASS}: EAPI=${EAPI:-0} is not supported" ;;
 esac
 
 inherit multiprocessing
 
 EXPORT_FUNCTIONS src_unpack src_compile src_install
 
-IUSE="${IUSE} debug fetch-crates"
-
-[[ ${CATEGORY}/${PN} != dev-util/cargo ]] && DEPEND=">=dev-util/cargo-0.13.0"
+IUSE="${IUSE} debug"
 
 ECARGO_HOME="${WORKDIR}/cargo_home"
 ECARGO_VENDOR="${ECARGO_HOME}/gentoo"
@@ -31,17 +36,18 @@ ECARGO_VENDOR="${ECARGO_HOME}/gentoo"
 # @DESCRIPTION:
 # Generates the URIs to put in SRC_URI to help fetch dependencies.
 cargo_crate_uris() {
+	readonly regex='^(.*)-([0-9]+\.[0-9]+\.[0-9]+.*)$'
 	local crate
 	for crate in "$@"; do
-		local name version url pretag
-		name="${crate%-*}"
-		version="${crate##*-}"
-		pretag="[a-zA-Z]+"
-		if [[ $version =~ $pretag ]]; then
-			version="${name##*-}-${version}"
-			name="${name%-*}"
+		local name version url
+		[[ $crate =~ $regex ]] || die "Could not parse name and version from crate: $crate"
+		name="${BASH_REMATCH[1]}"
+		version="${BASH_REMATCH[2]}"
+		if [[ "${CARGO_FETCH_CRATES}" == "not" ]]; then
+			url="https://crates.io/api/v1/crates/${name}/${version}/download -> ${crate}.crate"
+		else
+			url=""
 		fi
-		url="!fetch-crates? ( https://crates.io/api/v1/crates/${name}/${version}/download -> ${crate}.crate )"
 		echo "${url}"
 	done
 }
@@ -52,7 +58,7 @@ cargo_crate_uris() {
 cargo_src_unpack() {
 	debug-print-function ${FUNCNAME} "$@"
 
-	if use fetch-crates; then
+	if [[ "${CARGO_FETCH_CRATES}" == "yes" ]]; then
 		# Cache crates in persistent store
 		# Do no redownload them at every compilation
 		ECARGO_HOME="${PORTAGE_ACTUAL_DISTDIR-${DISTDIR}}/cargo-src"
@@ -64,8 +70,9 @@ cargo_src_unpack() {
 	mkdir -p "${ECARGO_VENDOR}" || die
 	mkdir -p "${S}" || die
 
-	if use fetch-crates; then
-		ewarn "USE=fetch-crates is set. Crates will be fetched from crates.io."
+	if [[ "${CARGO_FETCH_CRATES}" == "yes" ]]; then
+		default
+		ewarn "Crates will be fetched from crates.io."
 		return
 	fi
 
@@ -143,7 +150,7 @@ cargo_src_compile() {
 cargo_src_install() {
 	debug-print-function ${FUNCNAME} "$@"
 
-	cargo install -j $(makeopts_jobs) --root="${D}/usr" $(usex debug --debug "") \
+	cargo install -j $(makeopts_jobs) --root="${D}/usr" $(usex debug --debug "") "$@" \
 		|| die "cargo install failed"
 	rm -f "${D}/usr/.crates.toml"
 

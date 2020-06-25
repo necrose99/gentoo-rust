@@ -59,7 +59,11 @@ DESCRIPTION="Make Debian packages (.deb) easily with a Cargo subcommand"
 HOMEPAGE="https://github.com/mmstick/cargo-deb#readme"
 SRC_URI="$(cargo_crate_uris ${CRATES})"
 RESTRICT="mirror"
+<<<<<<< HEAD
 LICENSE="MIT" # Update to proper Gentoo format
+=======
+LICENSE="MIT"
+>>>>>>> ed530b0a3022723e572d7a60c2ee3bce1f73b365
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""

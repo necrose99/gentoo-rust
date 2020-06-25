@@ -5,6 +5,8 @@ EAPI=6
 
 inherit cargo
 
+CARGO_FETCH_CRATES=yes
+
 DESCRIPTION="md cat"
 HOMEPAGE="https://github.com/lunaryorn/mdcat"
 SRC_URI="https://github.com/lunaryorn/mdcat/archive/mdcat-${PV}.tar.gz"
@@ -12,12 +14,7 @@ RESTRICT="mirror"
 LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+fetch-crates"
 DEPEND=""
 RDEPEND="${DEPEND}"
 
 S="${WORKDIR}/${PN}-${P}"
-
-src_unpack() {
-	default
-}

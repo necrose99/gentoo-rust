@@ -74,7 +74,11 @@ DESCRIPTION="Build RPMs from Rust projects using Cargo"
 HOMEPAGE="https://github.com/rustrpm/cargo-rpm/"
 SRC_URI="$(cargo_crate_uris ${CRATES})"
 RESTRICT="mirror"
+<<<<<<< HEAD
 LICENSE="Apache-2.0" # Update to proper Gentoo format
+=======
+LICENSE="Apache-2.0"
+>>>>>>> ed530b0a3022723e572d7a60c2ee3bce1f73b365
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""

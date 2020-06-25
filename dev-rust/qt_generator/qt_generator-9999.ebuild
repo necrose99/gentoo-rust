@@ -1,9 +1,11 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
 inherit cargo git-r3
+
+CARGO_FETCH_CRATES=yes
 
 EGIT_REPO_URI="https://github.com/rust-qt/cpp_to_rust.git"
 
@@ -19,7 +21,6 @@ IUSE=""
 CDEPEND="dev-db/sqlite"
 DEPEND="${CDEPEND}
 virtual/rust
-|| ( dev-util/cargo dev-util/cargo-bin )
 "
 RDEPEND="${CDEPEND}
 dev-qt/qtchooser

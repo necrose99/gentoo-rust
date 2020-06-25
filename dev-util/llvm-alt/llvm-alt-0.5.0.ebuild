@@ -21,7 +21,11 @@ DESCRIPTION="A wrapper for LLVM, a powerful library and toolkit for compilers"
 HOMEPAGE="https://github.com/TomBebbington/llvm-rs"
 SRC_URI="$(cargo_crate_uris ${CRATES})"
 RESTRICT="mirror"
+<<<<<<< HEAD
 LICENSE="BSD-3-Clause" # Update to proper Gentoo format
+=======
+LICENSE="bsd-3-clause"
+>>>>>>> ed530b0a3022723e572d7a60c2ee3bce1f73b365
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""

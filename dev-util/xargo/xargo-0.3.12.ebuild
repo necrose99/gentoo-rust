@@ -42,11 +42,19 @@ xargo-0.3.12
 
 inherit cargo
 
+<<<<<<< HEAD
 DESCRIPTION="The sysroot manager that lets you build and customize `std`"
 HOMEPAGE="https://github.com/japaric/xargo"
 SRC_URI="$(cargo_crate_uris ${CRATES})"
 RESTRICT="mirror"
 LICENSE="MIT OR Apache-2.0" # Update to proper Gentoo format
+=======
+DESCRIPTION="The sysroot manager that lets you build and customize std"
+HOMEPAGE="https://github.com/japaric/xargo"
+SRC_URI="$(cargo_crate_uris ${CRATES})"
+RESTRICT="mirror"
+LICENSE="|| ( MIT Apache-2.0 )"
+>>>>>>> ed530b0a3022723e572d7a60c2ee3bce1f73b365
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
